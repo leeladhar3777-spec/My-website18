@@ -1,6 +1,4 @@
-let stage, component;
-
-// ---------------- BMI ----------------
+// ================= BMI =================
 function calcBMI(){
 
 let h_cm = parseFloat(height.value);
@@ -63,21 +61,31 @@ bmiDetails.innerHTML = `
 dietPlan.innerHTML = `<p>${diet}</p>`;
 }
 
-// ---------------- PROTEIN VIEWER ----------------
+// ================= PROTEIN VIEWER =================
+let stage, component;
+let spinning=false;
+
+function initViewer(){
+stage = new NGL.Stage("viewer");
+}
+
 async function loadProtein(){
 
-document.getElementById("viewer").innerHTML = "";
+document.getElementById("viewer").innerHTML="";
+initViewer();
 
-stage = new NGL.Stage("viewer");
-
-let pdb = document.getElementById("pdb").value 
-       || document.getElementById("pdbSelect").value;
+let pdb = pdbInput.value || pdbSelect.value;
 
 try{
+
 component = await stage.loadFile("rcsb://" + pdb);
 
-component.addRepresentation("cartoon", {
-colorScheme: "chainname"
+component.addRepresentation(rep.value,{
+colorScheme: color.value
+});
+
+component.addRepresentation("cartoon",{
+colorScheme:"sstruc"
 });
 
 component.autoView();
@@ -85,65 +93,105 @@ component.autoView();
 fetchProteinInfo(pdb);
 
 }catch(e){
-alert("Protein load failed. Check PDB ID or internet.");
+alert("Protein load failed");
 }
 }
 
-// rotate
+// ROTATE
 function toggleSpin(){
-if(stage){
-stage.setSpin(!stage.spin);
-}
+spinning=!spinning;
+stage.setSpin(spinning);
 }
 
-// ---------------- PROTEIN INFO ----------------
+// RESET
+function resetView(){
+component.autoView();
+stage.setSpin(false);
+spinning=false;
+}
+
+// ================= PROTEIN INFO =================
 async function fetchProteinInfo(pdb){
 
 try{
 let res = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${pdb}`);
 let data = await res.json();
 
-document.getElementById("proteinInfo").innerHTML = `
+proteinInfo.innerHTML = `
 <b>Title:</b> ${data.struct.title}<br>
 <b>Method:</b> ${data.exptl[0].method}
 `;
 
 }catch{
-document.getElementById("proteinInfo").innerText = "Info not available";
+proteinInfo.innerText="Info not available";
 }
 }
 
-// ---------------- ALIGNMENT ----------------
+// ================= STRUCTURE ANALYSIS =================
+function analyzeStructure(){
+
+let helix=0, sheet=0, total=0;
+
+component.structure.eachResidue(r=>{
+total++;
+if(r.sstruc==="h") helix++;
+else if(r.sstruc==="e") sheet++;
+});
+
+let hp=(helix/total*100).toFixed(1);
+let sp=(sheet/total*100).toFixed(1);
+let cp=(100-hp-sp).toFixed(1);
+
+analysis.innerHTML=`
+<b>Helix:</b> ${hp}%<br>
+<b>Sheet:</b> ${sp}%<br>
+<b>Coil:</b> ${cp}%<br>
+`;
+}
+
+// ================= ALIGNMENT (BLAST STYLE) =================
+function score(a,b){
+if(a===b) return 2;
+if(a==="-"||b==="-") return -2;
+return -1;
+}
+
 function alignSeq(){
 
-let s1 = seq1.value.toUpperCase().replace(/\s+/g,"");
-let s2 = seq2.value.toUpperCase().replace(/\s+/g,"");
+let q = seq1.value.toUpperCase().replace(/\s+/g,"");
+let s = seq2.value.toUpperCase().replace(/\s+/g,"");
 
-let match="",score=0,matchCount=0;
+let qA="", m="", sA="";
+let scoreTotal=0, matches=0;
 
-for(let i=0;i<Math.max(s1.length,s2.length);i++){
+let len=Math.max(q.length,s.length);
 
-let a=s1[i]||"-";
-let b=s2[i]||"-";
+for(let i=0;i<len;i++){
 
-if(a===b){
-match+="|";
-score+=2;
-matchCount++;
+let a=q[i]||"-";
+let b=s[i]||"-";
+
+scoreTotal += score(a,b);
+
+if(a===b && a!=="-"){
+qA+=a; m+="|"; sA+=b; matches++;
 }
 else{
-match+=" ";
-score-=1;
+qA+=a;
+m+=" ";
+sA+=b;
 }
 }
 
-let identity = ((matchCount/Math.max(s1.length,s2.length))*100).toFixed(2);
+let identity=((matches/len)*100).toFixed(2);
 
-alignOutput.innerText =
-s1 + "\n" + match + "\n" + s2;
+alignOut.innerText =
+"Query  1  "+qA+"\n"+
+"        "+m+"\n"+
+"Sbjct  1  "+sA;
 
-alignStats.innerHTML = `
-<b>Score:</b> ${score}<br>
+alignStats.innerHTML=`
+<b>Score:</b> ${scoreTotal}<br>
 <b>Identity:</b> ${identity}%
 `;
-  }
+}
