@@ -2,10 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>BioAI Ultimate 💀🚀</title>
+<title>BioAI Final System 💀🚀</title>
 
 <link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://unpkg.com/ngl@latest/dist/ngl.js"></script>
 </head>
 
@@ -19,7 +18,7 @@
 <div class="card">
 <h3>📊 Ultimate BMI Health System</h3>
 
-<input id="height" placeholder="Height (cm)">
+<input id="height" placeholder="Height (m)">
 <input id="weight" placeholder="Weight (kg)">
 <input id="ageBMI" placeholder="Age">
 
@@ -35,51 +34,36 @@
 <div id="dietPlan"></div>
 </div>
 
-<!--
-
 <!-- PROTEIN -->
 <div class="card">
-<h3>🧬 Protein Analyzer</h3>
+<h3>🧬 Protein Viewer</h3>
 
 <select id="pdbSelect">
-<option value="1BNA">DNA</option>
+<option value="1CRN">Crambin</option>
 <option value="4HHB">Hemoglobin</option>
 <option value="1INS">Insulin</option>
 <option value="1LYZ">Lysozyme</option>
-<option value="6VSB">COVID Spike</option>
+<option value="6VSB">Spike Protein</option>
 </select>
 
 <input id="pdb" placeholder="Custom PDB ID">
 
-<select id="representation">
-<option value="cartoon">Cartoon</option>
-<option value="surface">Surface</option>
-<option value="ball+stick">Ball+Stick</option>
-</select>
-
-<select id="colorScheme">
-<option value="chainname">Chain</option>
-<option value="element">Element</option>
-<option value="residueindex">Rainbow</option>
-</select>
-
-<button onclick="loadProtein()">Load</button>
+<button onclick="loadProtein()">Load Protein</button>
 <button onclick="toggleSpin()">Rotate</button>
-<button onclick="highlightLigand()">Ligand</button>
-<button onclick="highlightActiveSite()">Active Site</button>
-<button onclick="analyzeStructure()">Analyze</button>
 
 <div id="viewer"></div>
-<div id="analysisPanel"></div>
-<div id="infoPanel"></div>
+<div id="proteinInfo"></div>
 </div>
 
 <!-- ALIGNMENT -->
 <div class="card">
-<h3>🧬 Alignment PRO</h3>
-<textarea id="seq1"></textarea>
-<textarea id="seq2"></textarea>
+<h3>🧬 Sequence Alignment</h3>
+
+<textarea id="seq1" placeholder="Sequence 1"></textarea>
+<textarea id="seq2" placeholder="Sequence 2"></textarea>
+
 <button onclick="alignSeq()">Align</button>
+
 <pre id="alignOutput"></pre>
 <div id="alignStats"></div>
 </div>
@@ -88,4 +72,4 @@
 
 <script src="script.js"></script>
 </body>
-</html>
+                        </html>
