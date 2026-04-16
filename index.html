@@ -2,10 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Bioinformatics Pro Lab 💀🧬</title>
+<title> SRM Bioinformatics Lab 🧬</title>
 
 <link rel="stylesheet" href="style.css">
-
 <script src="https://unpkg.com/ngl@latest/dist/ngl.js"></script>
 </head>
 
@@ -15,23 +14,23 @@
 
 <div class="container">
 
-<!-- BMI MODULE -->
+<!-- BMI -->
 <div class="card">
-<h3>📊 BMI Analyzer</h3>
+<h3>📊 BMI Analyzer Pro</h3>
 
 <input id="height" placeholder="Height (cm)">
 <input id="weight" placeholder="Weight (kg)">
 <input id="age" placeholder="Age">
 
-<button onclick="calcBMI()">Calculate</button>
+<button onclick="calcBMI()">Analyze</button>
 
 <div id="bmiOut"></div>
 <div id="dietOut"></div>
 </div>
 
-<!-- PROTEIN VIEWER -->
+<!-- PROTEIN -->
 <div class="card">
-<h3>🧬 Protein Viewer Pro Max</h3>
+<h3>🧬 Protein Viewer </h3>
 
 <select id="pdbSelect">
 <option value="1CRN">Crambin</option>
@@ -59,24 +58,15 @@
 <button onclick="loadProtein()">Load Protein</button>
 <button onclick="toggleSpin()">Rotate</button>
 <button onclick="resetView()">Reset</button>
+
+<!-- NEW FEATURES -->
+<button onclick="showLigand()">Ligands</button>
+<button onclick="showActiveSite()">Active Site</button>
 <button onclick="analyzeStructure()">Analyze</button>
 
 <div id="viewer"></div>
 <div id="proteinInfo"></div>
 <div id="analysis"></div>
-</div>
-
-<!-- ALIGNMENT -->
-<div class="card">
-<h3>🧬 BLAST Alignment Engine</h3>
-
-<textarea id="seq1" placeholder="Query Sequence"></textarea>
-<textarea id="seq2" placeholder="Subject Sequence"></textarea>
-
-<button onclick="alignSeq()">Run Alignment</button>
-
-<pre id="alignOut"></pre>
-<div id="alignStats"></div>
 </div>
 
 </div>
