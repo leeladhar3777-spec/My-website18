@@ -1,95 +1,95 @@
-// BMI + DIET
-function calcBMI(){
-let h=parseFloat(height.value);
-let w=parseFloat(weight.value);
+let stage, component;
+let spinning = false;
 
-let bmi=w/(h*h);
-bmiResult.innerText="BMI: "+bmi.toFixed(2);
-
-let diet="";
-if(bmi<18.5){
-diet="🍽️ Eat high calorie foods";
-}else if(bmi<25){
-diet="🥗 Maintain balanced diet";
-}else{
-diet="🔥 Reduce calories & exercise";
-}
-dietPlan.innerText=diet;
-}
-
-// AI HEALTH
-function runAI(){
-let age=parseInt(ageAI.value);
-let s=symptomsAI.value.toLowerCase();
-
-let score=0;
-if(age>50)score+=2;
-if(s.includes("fever"))score+=2;
-if(s.includes("chest"))score+=3;
-
-let level="Low";
-if(score>=3)level="Moderate";
-if(score>=6)level="High";
-
-aiReport.innerHTML="Risk: "+level;
-}
-
-// CHAT
-let step=0;
-function startChat(){
-step=0;
-aiChat.innerHTML="🤖 Main symptom?";
-}
-
-function nextChat(input){
-aiChat.innerHTML+="<br>👤 "+input;
-
-if(step==0){
-aiChat.innerHTML+="<br>🤖 Fever?";
-step++;
-}
-else{
-aiChat.innerHTML+="<br>🤖 Stay healthy!";
-}
-}
-
-// PROTEIN
-let stage,component;
+// LOAD PROTEIN
 async function loadProtein(){
-viewer.innerHTML="";
-stage=new NGL.Stage("viewer");
+  viewer.innerHTML="";
+  stage = new NGL.Stage("viewer");
 
-let id=pdb.value||pdbSelect.value;
-component=await stage.loadFile("rcsb://"+id);
-component.addRepresentation("cartoon");
-component.autoView();
+  let pdbID = pdb.value || pdbSelect.value;
+
+  component = await stage.loadFile("rcsb://" + pdbID);
+
+  component.addRepresentation(representation.value, {
+    color: colorScheme.value
+  });
+
+  component.addRepresentation("cartoon", {
+    colorScheme: "sstruc"
+  });
+
+  component.autoView();
+
+  fetchInfo(pdbID);
 }
 
+// ROTATE
+function toggleSpin(){
+  spinning = !spinning;
+  stage.setSpin(spinning);
+}
+
+// LIGAND
+function highlightLigand(){
+  component.addRepresentation("ball+stick", {
+    sele: "hetero",
+    color: "red"
+  });
+}
+
+// ACTIVE SITE (demo region)
+function highlightActiveSite(){
+  component.addRepresentation("spacefill", {
+    sele: "resi 45-55",
+    color: "yellow"
+  });
+}
+
+// STRUCTURE ANALYSIS
 function analyzeStructure(){
-let h=0,t=0;
-component.structure.eachResidue(r=>{
-t++;
-if(r.sstruc==="h")h++;
-});
-analysisPanel.innerText="Helix%: "+((h/t)*100).toFixed(1);
+  let helix=0, sheet=0, total=0;
+
+  component.structure.eachResidue(r=>{
+    total++;
+    if(r.sstruc==="h") helix++;
+    else if(r.sstruc==="e") sheet++;
+  });
+
+  let helixP = (helix/total*100).toFixed(1);
+  let sheetP = (sheet/total*100).toFixed(1);
+  let coilP = (100 - helixP - sheetP).toFixed(1);
+
+  analysisPanel.innerHTML = `
+    <h4>📊 Structure</h4>
+    Helix: ${helixP}%<br>
+    Sheet: ${sheetP}%<br>
+    Coil: ${coilP}%
+  `;
+
+  aiInsight(helixP, sheetP);
 }
 
-// ALIGNMENT
-function alignSeq(){
-let s1=seq1.value.toUpperCase();
-let s2=seq2.value.toUpperCase();
+// AI INSIGHT
+function aiInsight(h,s){
+  let insight = "General protein";
 
-let match="";
-let score=0;
+  if(h > 50) insight = "Likely structural protein";
+  if(s > 40) insight = "May have binding/enzymatic role";
 
-for(let i=0;i<Math.max(s1.length,s2.length);i++){
-let a=s1[i]||"-";
-let b=s2[i]||"-";
-
-if(a===b){match+="|";score+=2;}
-else{match+=" ";score-=1;}
+  analysisPanel.innerHTML += `<p>🤖 Insight: ${insight}</p>`;
 }
 
-alignOutput.innerText=s1+"\n"+match+"\n"+s2;
-alignStats.innerText="Score: "+score;
+// FETCH INFO
+async function fetchInfo(pdbID){
+  try{
+    let res = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${pdbID}`);
+    let data = await res.json();
+
+    infoPanel.innerHTML = `
+      <h4>${data.struct.title}</h4>
+      Method: ${data.exptl[0].method}
+    `;
+  }catch{
+    infoPanel.innerText = "Info load failed";
+  }
 }
