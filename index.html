@@ -17,34 +17,29 @@
 
 <!-- BMI -->
 <div class="card">
-<h3>📊 BMI + Diet</h3>
-<input id="height" placeholder="Height (m)">
+<h3>📊 Ultimate BMI Health System</h3>
+
+<input id="height" placeholder="Height (cm)">
 <input id="weight" placeholder="Weight (kg)">
+<input id="ageBMI" placeholder="Age">
+
+<select id="gender">
+<option value="male">Male</option>
+<option value="female">Female</option>
+</select>
+
 <button onclick="calcBMI()">Analyze</button>
-<p id="bmiResult"></p>
+
+<div id="bmiResult"></div>
+<div id="bmiDetails"></div>
 <div id="dietPlan"></div>
 </div>
 
-<!-- AI HEALTH -->
-<div class="card">
-<h3>🤖 AI Health Assistant</h3>
-<input id="ageAI" placeholder="Age">
-<input id="symptomsAI" placeholder="Symptoms">
-
-<button onclick="runAI()">Analyze</button>
-<div id="aiReport"></div>
-
-<hr>
-
-<button onclick="startChat()">Start Chat</button>
-<div id="aiChat"></div>
-<input id="chatInputAI">
-<button onclick="nextChat(chatInputAI.value)">Send</button>
-</div>
+<!--
 
 <!-- PROTEIN -->
 <div class="card">
-<h3>🧬 Protein Analyzer PRO MAX</h3>
+<h3>🧬 Protein Analyzer</h3>
 
 <select id="pdbSelect">
 <option value="1BNA">DNA</option>
