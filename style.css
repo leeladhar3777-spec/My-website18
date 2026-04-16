@@ -1,4 +1,3 @@
-
 body{
 margin:0;
 font-family:Arial;
@@ -22,10 +21,10 @@ padding:20px;
 .card{
 background:#1e293b;
 padding:20px;
-border-radius:10px;
+border-radius:12px;
 }
 
-input,button,textarea{
+input,button,textarea,select{
 width:100%;
 margin:5px 0;
 padding:10px;
@@ -35,8 +34,9 @@ border-radius:8px;
 
 button{
 background:#22c55e;
+cursor:pointer;
 }
 
 #viewer{
-height:300px;
+height:320px;
 }
