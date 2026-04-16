@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BioAI Ultimate 💀🚀</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/ngl@latest/dist/ngl.js"></script>
+</head>
+
+<body>
+
+<header>🧬 BioAI Ultimate Dashboard</header>
+
+<div class="container">
+
+<div class="card">
+<h3>📊 BMI Analyzer</h3>
+<input id="height" placeholder="Height (m)">
+<input id="weight" placeholder="Weight (kg)">
+<button onclick="calcBMI()">Analyze</button>
+<p id="bmiResult"></p>
+<canvas id="chart"></canvas>
+</div>
+
+<div class="card">
+<h3>🤖 AI Health Prediction</h3>
+<input id="age" placeholder="Age">
+<input id="symptom" placeholder="Symptoms">
+<button onclick="predict()">Predict</button>
+<p id="prediction"></p>
+</div>
+
+<div class="card">
+<h3>🧬 3D Protein Viewer</h3>
+<input id="pdb" placeholder="PDB ID (1BNA)">
+<button onclick="loadProtein()">Load</button>
+<div id="viewer"></div>
+</div>
+
+<div class="card">
+<h3>💬 Smart Chatbot</h3>
+<input id="chatInput" placeholder="Ask biology">
+<button onclick="chat()">Ask</button>
+<p id="chatOutput"></p>
+</div>
+
+<div class="card">
+<h3>📈 BMI History</h3>
+<ul id="history"></ul>
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
