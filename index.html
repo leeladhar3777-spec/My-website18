@@ -5,14 +5,13 @@
 <title>BioAI Ultimate 💀🚀</title>
 
 <link rel="stylesheet" href="style.css">
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://unpkg.com/ngl@latest/dist/ngl.js"></script>
 </head>
 
 <body>
 
-<header>🧬 LEELADHAR BioAI System [SRM]</header>
+<header>🧬 BioAI Ultimate System</header>
 
 <div class="container">
 
@@ -26,7 +25,7 @@
 <div id="dietPlan"></div>
 </div>
 
-<!-- AI Health -->
+<!-- AI HEALTH -->
 <div class="card">
 <h3>🤖 AI Health Assistant</h3>
 <input id="ageAI" placeholder="Age">
@@ -43,9 +42,9 @@
 <button onclick="nextChat(chatInputAI.value)">Send</button>
 </div>
 
-<!-- Protein -->
+<!-- PROTEIN -->
 <div class="card">
-<h3>🧬 Protein Analyzer</h3>
+<h3>🧬 Protein Analyzer PRO MAX</h3>
 
 <select id="pdbSelect">
 <option value="1BNA">DNA</option>
@@ -55,18 +54,34 @@
 <option value="6VSB">COVID Spike</option>
 </select>
 
-<input id="pdb">
+<input id="pdb" placeholder="Custom PDB ID">
+
+<select id="representation">
+<option value="cartoon">Cartoon</option>
+<option value="surface">Surface</option>
+<option value="ball+stick">Ball+Stick</option>
+</select>
+
+<select id="colorScheme">
+<option value="chainname">Chain</option>
+<option value="element">Element</option>
+<option value="residueindex">Rainbow</option>
+</select>
 
 <button onclick="loadProtein()">Load</button>
+<button onclick="toggleSpin()">Rotate</button>
+<button onclick="highlightLigand()">Ligand</button>
+<button onclick="highlightActiveSite()">Active Site</button>
 <button onclick="analyzeStructure()">Analyze</button>
 
 <div id="viewer"></div>
 <div id="analysisPanel"></div>
+<div id="infoPanel"></div>
 </div>
 
-<!-- Alignment -->
+<!-- ALIGNMENT -->
 <div class="card">
-<h3>🧬 Alignment Tool</h3>
+<h3>🧬 Alignment PRO</h3>
 <textarea id="seq1"></textarea>
 <textarea id="seq2"></textarea>
 <button onclick="alignSeq()">Align</button>
@@ -77,6 +92,5 @@
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
