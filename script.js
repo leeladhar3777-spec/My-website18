@@ -1,104 +1,95 @@
-let historyData = JSON.parse(localStorage.getItem("bmiHistory")) || [];
-let stage, component, isRotating=false;
-
-// BMI
+// BMI + DIET
 function calcBMI(){
 let h=parseFloat(height.value);
 let w=parseFloat(weight.value);
-if(!h||!w)return alert("Enter valid");
 
 let bmi=w/(h*h);
 bmiResult.innerText="BMI: "+bmi.toFixed(2);
 
-historyData.push(bmi);
-localStorage.setItem("bmiHistory",JSON.stringify(historyData));
-
-history.innerHTML="";
-historyData.forEach(v=>{
-let li=document.createElement("li");
-li.innerText=v.toFixed(2);
-history.appendChild(li);
-});
-
-new Chart(chart,{
-type:"line",
-data:{labels:historyData.map((_,i)=>i+1),
-datasets:[{data:historyData}]}
-});
+let diet="";
+if(bmi<18.5){
+diet="🍽️ Eat high calorie foods";
+}else if(bmi<25){
+diet="🥗 Maintain balanced diet";
+}else{
+diet="🔥 Reduce calories & exercise";
+}
+dietPlan.innerText=diet;
 }
 
-// AI prediction
-function predict(){
-let ageVal=age.value;
-let sym=symptom.value.toLowerCase();
-let res="Low Risk";
-if(ageVal>50||sym.includes("fever"))res="Moderate Risk";
-if(sym.includes("chest"))res="High Risk";
-prediction.innerText=res;
+// AI HEALTH
+function runAI(){
+let age=parseInt(ageAI.value);
+let s=symptomsAI.value.toLowerCase();
+
+let score=0;
+if(age>50)score+=2;
+if(s.includes("fever"))score+=2;
+if(s.includes("chest"))score+=3;
+
+let level="Low";
+if(score>=3)level="Moderate";
+if(score>=6)level="High";
+
+aiReport.innerHTML="Risk: "+level;
 }
 
-// Protein load
+// CHAT
+let step=0;
+function startChat(){
+step=0;
+aiChat.innerHTML="🤖 Main symptom?";
+}
+
+function nextChat(input){
+aiChat.innerHTML+="<br>👤 "+input;
+
+if(step==0){
+aiChat.innerHTML+="<br>🤖 Fever?";
+step++;
+}
+else{
+aiChat.innerHTML+="<br>🤖 Stay healthy!";
+}
+}
+
+// PROTEIN
+let stage,component;
 async function loadProtein(){
 viewer.innerHTML="";
 stage=new NGL.Stage("viewer");
 
-let pdbID=pdb.value||pdbSelect.value;
-component=await stage.loadFile("rcsb://"+pdbID);
-
-component.addRepresentation(representation.value,{color:colorScheme.value});
-component.addRepresentation("cartoon",{colorScheme:"sstruc"});
-
+let id=pdb.value||pdbSelect.value;
+component=await stage.loadFile("rcsb://"+id);
+component.addRepresentation("cartoon");
 component.autoView();
-fetchInfo(pdbID);
 }
 
-// Rotate
-function toggleRotate(){
-isRotating=!isRotating;
-stage.setSpin(isRotating);
-}
-
-// Ligand
-function highlightLigand(){
-component.addRepresentation("ball+stick",{sele:"hetero",color:"red"});
-}
-
-// Structure analysis
 function analyzeStructure(){
-let h=0,s=0,t=0;
+let h=0,t=0;
 component.structure.eachResidue(r=>{
 t++;
 if(r.sstruc==="h")h++;
-else if(r.sstruc==="e")s++;
 });
-analysisPanel.innerHTML=`
-Helix: ${(h/t*100).toFixed(1)}%<br>
-Sheet: ${(s/t*100).toFixed(1)}%<br>
-Coil: ${(100-(h/t*100+s/t*100)).toFixed(1)}%
-`;
+analysisPanel.innerText="Helix%: "+((h/t)*100).toFixed(1);
 }
 
-// Fetch info
-async function fetchInfo(pdbID){
-try{
-let r=await fetch(`https://data.rcsb.org/rest/v1/core/entry/${pdbID}`);
-let d=await r.json();
-infoPanel.innerHTML=`
-<b>${d.struct.title}</b><br>
-Method: ${d.exptl[0].method}
-`;
-}catch{
-infoPanel.innerText="Info load failed";
-}
-}
-
-// Sequence alignment
+// ALIGNMENT
 function alignSeq(){
 let s1=seq1.value.toUpperCase();
 let s2=seq2.value.toUpperCase();
+
 let match="";
-for(let i=0;i<Math.min(s1.length,s2.length);i++){
-match+=(s1[i]===s2[i])?"|":" ";
+let score=0;
+
+for(let i=0;i<Math.max(s1.length,s2.length);i++){
+let a=s1[i]||"-";
+let b=s2[i]||"-";
+
+if(a===b){match+="|";score+=2;}
+else{match+=" ";score-=1;}
 }
-alignOutput.innerText=s1+"\\n"+match+"\\n"+s2;
+
+alignOutput.innerText=s1+"\n"+match+"\n"+s2;
+alignStats.innerText="Score: "+score;
 }
