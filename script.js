@@ -1,4 +1,6 @@
-// BMI + DIET
+let stage, component;
+
+// ---------------- BMI ----------------
 function calcBMI(){
 
 let h_cm = parseFloat(height.value);
@@ -61,31 +63,87 @@ bmiDetails.innerHTML = `
 dietPlan.innerHTML = `<p>${diet}</p>`;
 }
 
-// ALIGNMENT PRO
+// ---------------- PROTEIN VIEWER ----------------
+async function loadProtein(){
+
+document.getElementById("viewer").innerHTML = "";
+
+stage = new NGL.Stage("viewer");
+
+let pdb = document.getElementById("pdb").value 
+       || document.getElementById("pdbSelect").value;
+
+try{
+component = await stage.loadFile("rcsb://" + pdb);
+
+component.addRepresentation("cartoon", {
+colorScheme: "chainname"
+});
+
+component.autoView();
+
+fetchProteinInfo(pdb);
+
+}catch(e){
+alert("Protein load failed. Check PDB ID or internet.");
+}
+}
+
+// rotate
+function toggleSpin(){
+if(stage){
+stage.setSpin(!stage.spin);
+}
+}
+
+// ---------------- PROTEIN INFO ----------------
+async function fetchProteinInfo(pdb){
+
+try{
+let res = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${pdb}`);
+let data = await res.json();
+
+document.getElementById("proteinInfo").innerHTML = `
+<b>Title:</b> ${data.struct.title}<br>
+<b>Method:</b> ${data.exptl[0].method}
+`;
+
+}catch{
+document.getElementById("proteinInfo").innerText = "Info not available";
+}
+}
+
+// ---------------- ALIGNMENT ----------------
 function alignSeq(){
 
-let s1=seq1.value.toUpperCase().replace(/\s+/g,"");
-let s2=seq2.value.toUpperCase().replace(/\s+/g,"");
+let s1 = seq1.value.toUpperCase().replace(/\s+/g,"");
+let s2 = seq2.value.toUpperCase().replace(/\s+/g,"");
 
 let match="",score=0,matchCount=0;
 
 for(let i=0;i<Math.max(s1.length,s2.length);i++){
+
 let a=s1[i]||"-";
 let b=s2[i]||"-";
 
 if(a===b){
-match+="|";score+=2;matchCount++;
-}
-else if(a==="-"||b==="-" ){
-match+=" ";score-=2;
+match+="|";
+score+=2;
+matchCount++;
 }
 else{
-match+=".";score-=1;
+match+=" ";
+score-=1;
 }
 }
 
-let identity=(matchCount/Math.max(s1.length,s2.length)*100).toFixed(2);
+let identity = ((matchCount/Math.max(s1.length,s2.length))*100).toFixed(2);
 
-alignOutput.innerText=s1+"\n"+match+"\n"+s2;
-alignStats.innerHTML=`Score:${score}<br>Identity:${identity}%`;
-}
+alignOutput.innerText =
+s1 + "\n" + match + "\n" + s2;
+
+alignStats.innerHTML = `
+<b>Score:</b> ${score}<br>
+<b>Identity:</b> ${identity}%
+`;
+  }
