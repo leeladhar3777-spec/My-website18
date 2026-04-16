@@ -1,127 +1,64 @@
 // BMI + DIET
 function calcBMI(){
-let h=parseFloat(height.value);
-let w=parseFloat(weight.value);
 
-if(!h||!w) return alert("Enter values");
+let h_cm = parseFloat(height.value);
+let w = parseFloat(weight.value);
+let age = parseInt(ageBMI.value);
+let gender = document.getElementById("gender").value;
 
-let bmi=w/(h*h);
-bmiResult.innerText="BMI: "+bmi.toFixed(2);
-
-let diet="";
-if(bmi<18.5){
-diet="🍽️ Weight gain diet: milk, rice, eggs, nuts";
+if(!h_cm || !w || !age){
+  alert("Enter all values");
+  return;
 }
-else if(bmi<25){
-diet="🥗 Balanced diet: veggies, protein, water";
+
+// convert cm → meters
+let h = h_cm / 100;
+
+// BMI
+let bmi = w / (h * h);
+
+// Category
+let category="",risk="";
+if(bmi < 18.5){category="Underweight";risk="Nutritional deficiency";}
+else if(bmi < 25){category="Normal";risk="Low risk";}
+else if(bmi < 30){category="Overweight";risk="Moderate risk";}
+else{category="Obese";risk="High risk";}
+
+// Ideal weight range
+let minWeight = (18.5 * h * h).toFixed(1);
+let maxWeight = (24.9 * h * h).toFixed(1);
+
+// BMR (calories)
+let bmr=0;
+if(gender==="male"){
+  bmr = 10*w + 6.25*h_cm - 5*age + 5;
+}else{
+  bmr = 10*w + 6.25*h_cm - 5*age - 161;
+}
+
+// Diet
+let diet="";
+if(category==="Underweight"){
+  diet="🍽️ High calorie diet: milk, rice, eggs, nuts";
+}
+else if(category==="Normal"){
+  diet="🥗 Balanced diet: veggies, protein, fruits";
 }
 else{
-diet="🔥 Fat loss: low calorie, exercise";
+  diet="🔥 Fat loss: low calorie, exercise";
 }
 
-dietPlan.innerText=diet;
-}
+// Output
+bmiResult.innerHTML = `<h3>BMI: ${bmi.toFixed(2)}</h3>`;
 
-// AI HEALTH
-function runAI(){
-let age=parseInt(ageAI.value);
-let s=symptomsAI.value.toLowerCase();
+bmiDetails.innerHTML = `
+<p><b>Category:</b> ${category}</p>
+<p><b>Health Risk:</b> ${risk}</p>
+<p><b>Ideal Weight:</b> ${minWeight}kg - ${maxWeight}kg</p>
+<p><b>Daily Calories:</b> ${Math.round(bmr)} kcal</p>
+`;
 
-let score=0;
-let cond=[];
-
-if(age>50)score+=2;
-if(s.includes("fever")){score+=2;cond.push("Infection");}
-if(s.includes("cough")){score+=1;cond.push("Respiratory");}
-if(s.includes("chest")){score+=3;cond.push("Heart Risk");}
-
-let level="Low";
-if(score>=3)level="Moderate";
-if(score>=6)level="High";
-
-aiReport.innerHTML=`Risk: ${level}<br>Conditions: ${cond.join(", ")}`;
-}
-
-// CHAT
-let step=0;
-function startChat(){
-step=0;
-aiChat.innerHTML="🤖 Main symptom?";
-}
-function nextChat(input){
-aiChat.innerHTML+="<br>👤 "+input;
-if(step==0){
-aiChat.innerHTML+="<br>🤖 Fever?";
-step++;
-}else{
-aiChat.innerHTML+="<br>🤖 Stay healthy!";
-}
-}
-
-// PROTEIN
-let stage,component,spinning=false;
-
-async function loadProtein(){
-viewer.innerHTML="";
-stage=new NGL.Stage("viewer");
-
-let id=pdb.value||pdbSelect.value;
-component=await stage.loadFile("rcsb://"+id);
-
-component.addRepresentation(representation.value,{color:colorScheme.value});
-component.addRepresentation("cartoon",{colorScheme:"sstruc"});
-component.autoView();
-
-fetchInfo(id);
-}
-
-function toggleSpin(){
-spinning=!spinning;
-stage.setSpin(spinning);
-}
-
-function highlightLigand(){
-component.addRepresentation("ball+stick",{sele:"hetero",color:"red"});
-}
-
-function highlightActiveSite(){
-component.addRepresentation("spacefill",{sele:"resi 45-55",color:"yellow"});
-}
-
-function analyzeStructure(){
-let h=0,s=0,t=0;
-component.structure.eachResidue(r=>{
-t++;
-if(r.sstruc==="h")h++;
-else if(r.sstruc==="e")s++;
-});
-
-let hp=(h/t*100).toFixed(1);
-let sp=(s/t*100).toFixed(1);
-let cp=(100-hp-sp).toFixed(1);
-
-analysisPanel.innerHTML=`Helix:${hp}%<br>Sheet:${sp}%<br>Coil:${cp}%`;
-
-aiInsight(hp,sp);
-}
-
-function aiInsight(h,s){
-let text="General protein";
-if(h>50)text="Structural protein";
-if(s>40)text="Binding protein";
-
-analysisPanel.innerHTML+=`<br>🤖 ${text}`;
-}
-
-async function fetchInfo(id){
-try{
-let r=await fetch(`https://data.rcsb.org/rest/v1/core/entry/${id}`);
-let d=await r.json();
-
-infoPanel.innerHTML=`<b>${d.struct.title}</b><br>${d.exptl[0].method}`;
-}catch{
-infoPanel.innerText="Info error";
-}
+dietPlan.innerHTML = `<p>${diet}</p>`;
 }
 
 // ALIGNMENT PRO
