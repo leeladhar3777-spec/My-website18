@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BioAI Ultimate 💀🚀</title>
+<title>BioAI leeladhar 💀🚀</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -13,10 +13,11 @@
 
 <body>
 
-<header>🧬 BioAI Ultimate Dashboard</header>
+<header>🧬 BioAI Ultimate System</header>
 
 <div class="container">
 
+<!-- BMI -->
 <div class="card">
 <h3>📊 BMI Analyzer</h3>
 <input id="height" placeholder="Height (m)">
@@ -24,33 +25,63 @@
 <button onclick="calcBMI()">Analyze</button>
 <p id="bmiResult"></p>
 <canvas id="chart"></canvas>
+<ul id="history"></ul>
 </div>
 
+<!-- AI Prediction -->
 <div class="card">
-<h3>🤖 AI Health Prediction</h3>
+<h3>🤖 Health Prediction</h3>
 <input id="age" placeholder="Age">
 <input id="symptom" placeholder="Symptoms">
 <button onclick="predict()">Predict</button>
 <p id="prediction"></p>
 </div>
 
+<!-- Protein Viewer -->
 <div class="card">
-<h3>🧬 3D Protein Viewer</h3>
-<input id="pdb" placeholder="PDB ID (1BNA)">
+<h3>🧬 Protein Analyzer</h3>
+
+<select id="pdbSelect">
+<option value="1BNA">DNA</option>
+<option value="4HHB">Hemoglobin</option>
+<option value="1INS">Insulin</option>
+<option value="1LYZ">Lysozyme</option>
+<option value="6VSB">COVID Spike</option>
+</select>
+
+<input id="pdb" placeholder="Custom PDB ID">
+
+<select id="representation">
+<option value="cartoon">Cartoon</option>
+<option value="surface">Surface</option>
+<option value="ball+stick">Ball+Stick</option>
+</select>
+
+<select id="colorScheme">
+<option value="chainname">Chain</option>
+<option value="element">Element</option>
+<option value="residueindex">Rainbow</option>
+</select>
+
 <button onclick="loadProtein()">Load</button>
+<button onclick="toggleRotate()">Rotate</button>
+<button onclick="highlightLigand()">Ligand</button>
+<button onclick="analyzeStructure()">Analyze</button>
+
 <div id="viewer"></div>
+
+<div id="analysisPanel"></div>
+<div id="infoPanel"></div>
+
 </div>
 
+<!-- Sequence Alignment -->
 <div class="card">
-<h3>💬 Smart Chatbot</h3>
-<input id="chatInput" placeholder="Ask biology">
-<button onclick="chat()">Ask</button>
-<p id="chatOutput"></p>
-</div>
-
-<div class="card">
-<h3>📈 BMI History</h3>
-<ul id="history"></ul>
+<h3>🧬 Sequence Alignment</h3>
+<textarea id="seq1" placeholder="Sequence 1"></textarea>
+<textarea id="seq2" placeholder="Sequence 2"></textarea>
+<button onclick="alignSeq()">Align</button>
+<pre id="alignOutput"></pre>
 </div>
 
 </div>
