@@ -24,7 +24,7 @@ padding:20px;
 border-radius:12px;
 }
 
-input,button,textarea,select{
+input,textarea,button,select{
 width:100%;
 margin:5px 0;
 padding:10px;
@@ -38,5 +38,6 @@ cursor:pointer;
 }
 
 #viewer{
-height:320px;
+height:350px;
+background:black;
 }
