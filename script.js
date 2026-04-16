@@ -1,78 +1,53 @@
+let stage, component;
+let spinning=false;
+
 // ================= BMI =================
 function calcBMI(){
 
 let h_cm = parseFloat(height.value);
 let w = parseFloat(weight.value);
-let age = parseInt(ageBMI.value);
-let gender = document.getElementById("gender").value;
 
-if(!h_cm || !w || !age){
-  alert("Enter all values");
-  return;
+if(!h_cm || !w){
+alert("Enter values");
+return;
 }
 
-// convert cm → meters
-let h = h_cm / 100;
+let h = h_cm/100;
+let bmi = w/(h*h);
 
-// BMI
-let bmi = w / (h * h);
+let category="";
 
-// Category
-let category="",risk="";
-if(bmi < 18.5){category="Underweight";risk="Nutritional deficiency";}
-else if(bmi < 25){category="Normal";risk="Low risk";}
-else if(bmi < 30){category="Overweight";risk="Moderate risk";}
-else{category="Obese";risk="High risk";}
+if(bmi<18.5) category="Underweight";
+else if(bmi<25) category="Normal";
+else if(bmi<30) category="Overweight";
+else category="Obese";
 
-// Ideal weight range
-let minWeight = (18.5 * h * h).toFixed(1);
-let maxWeight = (24.9 * h * h).toFixed(1);
+let min=(18.5*h*h).toFixed(1);
+let max=(24.9*h*h).toFixed(1);
 
-// BMR (calories)
-let bmr=0;
-if(gender==="male"){
-  bmr = 10*w + 6.25*h_cm - 5*age + 5;
-}else{
-  bmr = 10*w + 6.25*h_cm - 5*age - 161;
-}
-
-// Diet
-let diet="";
-if(category==="Underweight"){
-  diet="🍽️ High calorie diet: milk, rice, eggs, nuts";
-}
-else if(category==="Normal"){
-  diet="🥗 Balanced diet: veggies, protein, fruits";
-}
-else{
-  diet="🔥 Fat loss: low calorie, exercise";
-}
-
-// Output
-bmiResult.innerHTML = `<h3>BMI: ${bmi.toFixed(2)}</h3>`;
-
-bmiDetails.innerHTML = `
-<p><b>Category:</b> ${category}</p>
-<p><b>Health Risk:</b> ${risk}</p>
-<p><b>Ideal Weight:</b> ${minWeight}kg - ${maxWeight}kg</p>
-<p><b>Daily Calories:</b> ${Math.round(bmr)} kcal</p>
+bmiOut.innerHTML=`
+<b>BMI:</b> ${bmi.toFixed(2)}<br>
+<b>Category:</b> ${category}<br>
+<b>Ideal Weight:</b> ${min} - ${max} kg
 `;
 
-dietPlan.innerHTML = `<p>${diet}</p>`;
+dietOut.innerText =
+category==="Normal"
+? "Balanced diet recommended"
+: category==="Underweight"
+? "High calorie diet required"
+: "Low calorie + exercise required";
 }
 
 // ================= PROTEIN VIEWER =================
-let stage, component;
-let spinning=false;
-
-function initViewer(){
+function init(){
 stage = new NGL.Stage("viewer");
 }
 
 async function loadProtein(){
 
 document.getElementById("viewer").innerHTML="";
-initViewer();
+init();
 
 let pdb = pdbInput.value || pdbSelect.value;
 
@@ -80,17 +55,19 @@ try{
 
 component = await stage.loadFile("rcsb://" + pdb);
 
+// MAIN REPRESENTATION
 component.addRepresentation(rep.value,{
 colorScheme: color.value
 });
 
+// STRUCTURE CARTOON
 component.addRepresentation("cartoon",{
 colorScheme:"sstruc"
 });
 
 component.autoView();
 
-fetchProteinInfo(pdb);
+fetchInfo(pdb);
 
 }catch(e){
 alert("Protein load failed");
@@ -107,27 +84,29 @@ stage.setSpin(spinning);
 function resetView(){
 component.autoView();
 stage.setSpin(false);
-spinning=false;
 }
 
-// ================= PROTEIN INFO =================
-async function fetchProteinInfo(pdb){
+// ================= LIGANDS =================
+function showLigand(){
 
-try{
-let res = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${pdb}`);
-let data = await res.json();
+component.addRepresentation("ball+stick",{
+sele:"hetero",
+color:"red"
+});
 
-proteinInfo.innerHTML = `
-<b>Title:</b> ${data.struct.title}<br>
-<b>Method:</b> ${data.exptl[0].method}
-`;
-
-}catch{
-proteinInfo.innerText="Info not available";
-}
 }
 
-// ================= STRUCTURE ANALYSIS =================
+// ================= ACTIVE SITE =================
+function showActiveSite(){
+
+component.addRepresentation("spacefill",{
+sele:"within 5 of ligand",
+color:"yellow"
+});
+
+}
+
+// ================= ANALYSIS =================
 function analyzeStructure(){
 
 let helix=0, sheet=0, total=0;
@@ -138,60 +117,30 @@ if(r.sstruc==="h") helix++;
 else if(r.sstruc==="e") sheet++;
 });
 
-let hp=(helix/total*100).toFixed(1);
-let sp=(sheet/total*100).toFixed(1);
-let cp=(100-hp-sp).toFixed(1);
+let h=(helix/total*100).toFixed(1);
+let s=(sheet/total*100).toFixed(1);
+let c=(100-h-s).toFixed(1);
 
 analysis.innerHTML=`
-<b>Helix:</b> ${hp}%<br>
-<b>Sheet:</b> ${sp}%<br>
-<b>Coil:</b> ${cp}%<br>
+<b>Helix:</b> ${h}%<br>
+<b>Sheet:</b> ${s}%<br>
+<b>Coil:</b> ${c}%<br>
 `;
 }
 
-// ================= ALIGNMENT (BLAST STYLE) =================
-function score(a,b){
-if(a===b) return 2;
-if(a==="-"||b==="-") return -2;
-return -1;
-}
+// ================= PROTEIN INFO =================
+async function fetchInfo(pdb){
 
-function alignSeq(){
+try{
+let res=await fetch(`https://data.rcsb.org/rest/v1/core/entry/${pdb}`);
+let d=await res.json();
 
-let q = seq1.value.toUpperCase().replace(/\s+/g,"");
-let s = seq2.value.toUpperCase().replace(/\s+/g,"");
-
-let qA="", m="", sA="";
-let scoreTotal=0, matches=0;
-
-let len=Math.max(q.length,s.length);
-
-for(let i=0;i<len;i++){
-
-let a=q[i]||"-";
-let b=s[i]||"-";
-
-scoreTotal += score(a,b);
-
-if(a===b && a!=="-"){
-qA+=a; m+="|"; sA+=b; matches++;
-}
-else{
-qA+=a;
-m+=" ";
-sA+=b;
-}
-}
-
-let identity=((matches/len)*100).toFixed(2);
-
-alignOut.innerText =
-"Query  1  "+qA+"\n"+
-"        "+m+"\n"+
-"Sbjct  1  "+sA;
-
-alignStats.innerHTML=`
-<b>Score:</b> ${scoreTotal}<br>
-<b>Identity:</b> ${identity}%
+proteinInfo.innerHTML=`
+<b>Title:</b> ${d.struct.title}<br>
+<b>Method:</b> ${d.exptl[0].method}
 `;
+
+}catch{
+proteinInfo.innerText="Info not available";
+}
 }
