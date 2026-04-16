@@ -1,80 +1,104 @@
 let historyData = JSON.parse(localStorage.getItem("bmiHistory")) || [];
+let stage, component, isRotating=false;
 
 // BMI
 function calcBMI(){
-  let h = parseFloat(document.getElementById("height").value);
-  let w = parseFloat(document.getElementById("weight").value);
+let h=parseFloat(height.value);
+let w=parseFloat(weight.value);
+if(!h||!w)return alert("Enter valid");
 
-  if(!h || !w) return alert("Enter valid values");
+let bmi=w/(h*h);
+bmiResult.innerText="BMI: "+bmi.toFixed(2);
 
-  let bmi = w/(h*h);
+historyData.push(bmi);
+localStorage.setItem("bmiHistory",JSON.stringify(historyData));
 
-  document.getElementById("bmiResult").innerText = "BMI: " + bmi.toFixed(2);
+history.innerHTML="";
+historyData.forEach(v=>{
+let li=document.createElement("li");
+li.innerText=v.toFixed(2);
+history.appendChild(li);
+});
 
-  historyData.push(bmi);
-  localStorage.setItem("bmiHistory", JSON.stringify(historyData));
-
-  updateHistory();
-
-  new Chart(document.getElementById("chart"), {
-    type: "line",
-    data: {
-      labels: historyData.map((_,i)=>i+1),
-      datasets: [{ label:"BMI Trend", data: historyData }]
-    }
-  });
+new Chart(chart,{
+type:"line",
+data:{labels:historyData.map((_,i)=>i+1),
+datasets:[{data:historyData}]}
+});
 }
 
-// HISTORY
-function updateHistory(){
-  let list = document.getElementById("history");
-  list.innerHTML = "";
-
-  historyData.forEach(v=>{
-    let li = document.createElement("li");
-    li.innerText = v.toFixed(2);
-    list.appendChild(li);
-  });
-}
-
-updateHistory();
-
-// AI Prediction
+// AI prediction
 function predict(){
-  let age = document.getElementById("age").value;
-  let sym = document.getElementById("symptom").value.toLowerCase();
-
-  let result = "Low Risk";
-
-  if(age > 50 || sym.includes("fever")) result = "Moderate Risk";
-  if(sym.includes("chest pain") || sym.includes("breathing")) result = "High Risk";
-
-  document.getElementById("prediction").innerText = result;
+let ageVal=age.value;
+let sym=symptom.value.toLowerCase();
+let res="Low Risk";
+if(ageVal>50||sym.includes("fever"))res="Moderate Risk";
+if(sym.includes("chest"))res="High Risk";
+prediction.innerText=res;
 }
 
-// Protein Viewer
-let stage;
+// Protein load
+async function loadProtein(){
+viewer.innerHTML="";
+stage=new NGL.Stage("viewer");
 
-function loadProtein(){
-  stage = new NGL.Stage("viewer");
+let pdbID=pdb.value||pdbSelect.value;
+component=await stage.loadFile("rcsb://"+pdbID);
 
-  let pdb = document.getElementById("pdb").value;
+component.addRepresentation(representation.value,{color:colorScheme.value});
+component.addRepresentation("cartoon",{colorScheme:"sstruc"});
 
-  stage.loadFile("rcsb://" + pdb).then(o=>{
-    o.addRepresentation("cartoon");
-    o.autoView();
-  });
+component.autoView();
+fetchInfo(pdbID);
 }
 
-// Chatbot
-function chat(){
-  let q = document.getElementById("chatInput").value.toLowerCase();
-  let ans = "Ask biology topic";
+// Rotate
+function toggleRotate(){
+isRotating=!isRotating;
+stage.setSpin(isRotating);
+}
 
-  if(q.includes("cell")) ans = "Cell is the basic unit of life";
-  else if(q.includes("dna")) ans = "DNA stores genetic information";
-  else if(q.includes("protein")) ans = "Proteins perform vital biological functions";
-  else if(q.includes("immunity")) ans = "Immunity protects against diseases";
+// Ligand
+function highlightLigand(){
+component.addRepresentation("ball+stick",{sele:"hetero",color:"red"});
+}
 
-  document.getElementById("chatOutput").innerText = ans;
+// Structure analysis
+function analyzeStructure(){
+let h=0,s=0,t=0;
+component.structure.eachResidue(r=>{
+t++;
+if(r.sstruc==="h")h++;
+else if(r.sstruc==="e")s++;
+});
+analysisPanel.innerHTML=`
+Helix: ${(h/t*100).toFixed(1)}%<br>
+Sheet: ${(s/t*100).toFixed(1)}%<br>
+Coil: ${(100-(h/t*100+s/t*100)).toFixed(1)}%
+`;
+}
+
+// Fetch info
+async function fetchInfo(pdbID){
+try{
+let r=await fetch(`https://data.rcsb.org/rest/v1/core/entry/${pdbID}`);
+let d=await r.json();
+infoPanel.innerHTML=`
+<b>${d.struct.title}</b><br>
+Method: ${d.exptl[0].method}
+`;
+}catch{
+infoPanel.innerText="Info load failed";
+}
+}
+
+// Sequence alignment
+function alignSeq(){
+let s1=seq1.value.toUpperCase();
+let s2=seq2.value.toUpperCase();
+let match="";
+for(let i=0;i<Math.min(s1.length,s2.length);i++){
+match+=(s1[i]===s2[i])?"|":" ";
+}
+alignOutput.innerText=s1+"\\n"+match+"\\n"+s2;
 }
