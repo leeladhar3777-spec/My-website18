@@ -24,12 +24,12 @@ padding:15px;
 border-radius:12px;
 }
 
-input,textarea,select,button{
+input,select,button{
 width:100%;
 margin:5px 0;
 padding:10px;
-border-radius:8px;
 border:none;
+border-radius:8px;
 }
 
 button{
