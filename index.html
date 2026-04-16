@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BioAI leeladhar 💀🚀</title>
+<title>BioAI Ultimate 💀🚀</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -13,31 +12,38 @@
 
 <body>
 
-<header>🧬 BioAI Ultimate System</header>
+<header>🧬 LEELADHAR BioAI System [SRM]</header>
 
 <div class="container">
 
 <!-- BMI -->
 <div class="card">
-<h3>📊 BMI Analyzer</h3>
+<h3>📊 BMI + Diet</h3>
 <input id="height" placeholder="Height (m)">
 <input id="weight" placeholder="Weight (kg)">
 <button onclick="calcBMI()">Analyze</button>
 <p id="bmiResult"></p>
-<canvas id="chart"></canvas>
-<ul id="history"></ul>
+<div id="dietPlan"></div>
 </div>
 
-<!-- AI Prediction -->
+<!-- AI Health -->
 <div class="card">
-<h3>🤖 Health Prediction</h3>
-<input id="age" placeholder="Age">
-<input id="symptom" placeholder="Symptoms">
-<button onclick="predict()">Predict</button>
-<p id="prediction"></p>
+<h3>🤖 AI Health Assistant</h3>
+<input id="ageAI" placeholder="Age">
+<input id="symptomsAI" placeholder="Symptoms">
+
+<button onclick="runAI()">Analyze</button>
+<div id="aiReport"></div>
+
+<hr>
+
+<button onclick="startChat()">Start Chat</button>
+<div id="aiChat"></div>
+<input id="chatInputAI">
+<button onclick="nextChat(chatInputAI.value)">Send</button>
 </div>
 
-<!-- Protein Viewer -->
+<!-- Protein -->
 <div class="card">
 <h3>🧬 Protein Analyzer</h3>
 
@@ -49,39 +55,23 @@
 <option value="6VSB">COVID Spike</option>
 </select>
 
-<input id="pdb" placeholder="Custom PDB ID">
-
-<select id="representation">
-<option value="cartoon">Cartoon</option>
-<option value="surface">Surface</option>
-<option value="ball+stick">Ball+Stick</option>
-</select>
-
-<select id="colorScheme">
-<option value="chainname">Chain</option>
-<option value="element">Element</option>
-<option value="residueindex">Rainbow</option>
-</select>
+<input id="pdb">
 
 <button onclick="loadProtein()">Load</button>
-<button onclick="toggleRotate()">Rotate</button>
-<button onclick="highlightLigand()">Ligand</button>
 <button onclick="analyzeStructure()">Analyze</button>
 
 <div id="viewer"></div>
-
 <div id="analysisPanel"></div>
-<div id="infoPanel"></div>
-
 </div>
 
-<!-- Sequence Alignment -->
+<!-- Alignment -->
 <div class="card">
-<h3>🧬 Sequence Alignment</h3>
-<textarea id="seq1" placeholder="Sequence 1"></textarea>
-<textarea id="seq2" placeholder="Sequence 2"></textarea>
+<h3>🧬 Alignment Tool</h3>
+<textarea id="seq1"></textarea>
+<textarea id="seq2"></textarea>
 <button onclick="alignSeq()">Align</button>
 <pre id="alignOutput"></pre>
+<div id="alignStats"></div>
 </div>
 
 </div>
