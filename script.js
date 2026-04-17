@@ -1,4 +1,4 @@
-// ================= BMI + BMR =================
+// ================= BMI =================
 function calcBMI(){
 
 let h = parseFloat(height.value);
@@ -27,7 +27,7 @@ let bmr = (genderVal==="male")
 ? 10*w + 6.25*(h*100) - 5*ageVal + 5
 : 10*w + 6.25*(h*100) - 5*ageVal - 161;
 
-bmiOut.innerHTML = `
+bmiOut.innerHTML=`
 <b>BMI:</b> ${bmi.toFixed(2)}<br>
 <b>Category:</b> ${category}<br>
 <b>BMR:</b> ${Math.round(bmr)} kcal/day
@@ -37,15 +37,14 @@ dietOut.innerText =
 category==="Normal"
 ? "Balanced diet recommended"
 : category==="Underweight"
-? "High calorie diet"
-: "Low calorie + exercise";
+? "High calorie diet needed"
+: "Low calorie + exercise required";
 }
 
 // ================= PROTEIN ENGINE =================
 let stage, component;
 let spin=false;
-let ligandOn=false;
-let activeOn=false;
+let ligand=false;
 
 function init(){
 stage = new NGL.Stage("viewer");
@@ -63,11 +62,12 @@ stage.loadFile("rcsb://" + pdb).then(comp=>{
 
 component = comp;
 
-// base view
+// BASE VIEW
 component.addRepresentation(rep.value,{
 colorScheme:"chainname"
 });
 
+// CARTOON
 component.addRepresentation("cartoon",{
 colorScheme:"sstruc"
 });
@@ -76,8 +76,6 @@ component.autoView();
 
 fetchInfo(pdb);
 
-}).catch(()=>{
-alert("Protein load failed");
 });
 }
 
@@ -98,15 +96,18 @@ function toggleLigand(){
 
 if(!component) return;
 
-if(!ligandOn){
+if(!ligand){
+
 component.addRepresentation("ball+stick",{
-sele:"hetero",
+sele:"hetero and not water",
 color:"red"
 });
-ligandOn=true;
+
+ligand=true;
+
 }else{
 loadProtein();
-ligandOn=false;
+ligand=false;
 }
 }
 
@@ -115,19 +116,76 @@ function toggleActiveSite(){
 
 if(!component) return;
 
-if(!activeOn){
+component.removeAllRepresentations();
 
-component.addRepresentation("spacefill",{
-sele:"within 5 of hetero",
-color:"yellow"
+// base
+component.addRepresentation(rep.value,{
+colorScheme:"chainname"
 });
 
-activeOn=true;
+component.addRepresentation("cartoon",{
+colorScheme:"sstruc"
+});
 
-}else{
-loadProtein();
-activeOn=false;
+// ligand
+component.addRepresentation("ball+stick",{
+sele:"hetero and not water",
+color:"red"
+});
+
+// active site pocket
+component.addRepresentation("spacefill",{
+sele:"within 4 of (hetero and not water)",
+color:"yellow",
+opacity:0.7
+});
+
+component.autoView();
 }
+
+// ================= ANALYSIS =================
+function analyzeProtein(){
+
+if(!component){
+alert("Load protein first");
+return;
+}
+
+let residues=0, atoms=0, ligands=0;
+let chains={};
+let amino={};
+
+component.structure.eachResidue(r=>{
+residues++;
+
+chains[r.chainname]=(chains[r.chainname]||0)+1;
+amino[r.resname]=(amino[r.resname]||0)+1;
+
+if(r.isHet) ligands++;
+});
+
+component.structure.eachAtom(a=>{
+atoms++;
+});
+
+let topAA = Object.entries(amino)
+.sort((a,b)=>b[1]-a[1])
+.slice(0,5)
+.map(x=>`${x[0]} (${x[1]})`)
+.join("<br>");
+
+let chainInfo = Object.entries(chains)
+.map(x=>`Chain ${x[0]}: ${x[1]}`)
+.join("<br>");
+
+analysisPanel.innerHTML=`
+<h3>🔬 Protein Analysis Report</h3>
+<b>Residues:</b> ${residues}<br>
+<b>Atoms:</b> ${atoms}<br>
+<b>Ligands:</b> ${ligands}<br>
+<br><b>Chains:</b><br>${chainInfo}
+<br><br><b>Top Amino Acids:</b><br>${topAA}
+`;
 }
 
 // ================= INFO =================
