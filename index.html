@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title> SRM Bioinformatics Lab 🧬</title>
+<title>Bio Lab Ultimate Pro 💀🧬</title>
 
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/ngl@latest/dist/ngl.js"></script>
@@ -10,17 +10,22 @@
 
 <body>
 
-<header>🧬 Bioinformatics Pro Lab</header>
+<header>🧬 SRM Bio Lab</header>
 
 <div class="container">
 
-<!-- BMI -->
+<!-- ================= BMI ================= -->
 <div class="card">
-<h3>📊 BMI Analyzer Pro</h3>
+<h3>📊 BMI + Health Analyzer</h3>
 
 <input id="height" placeholder="Height (cm)">
 <input id="weight" placeholder="Weight (kg)">
 <input id="age" placeholder="Age">
+
+<select id="gender">
+<option value="male">Male</option>
+<option value="female">Female</option>
+</select>
 
 <button onclick="calcBMI()">Analyze</button>
 
@@ -28,19 +33,26 @@
 <div id="dietOut"></div>
 </div>
 
-<!-- PROTEIN -->
+<!-- ================= PROTEIN ================= -->
 <div class="card">
-<h3>🧬 Protein Viewer </h3>
+<h3>🧬 Protein Explorer (ALL PDB)</h3>
 
-<select id="pdbSelect">
+<input id="pdbInput" placeholder="Enter PDB ID (e.g. 1CRN)">
+
+<select id="proteinList">
 <option value="1CRN">Crambin</option>
-<option value="4HHB">Hemoglobin</option>
 <option value="1INS">Insulin</option>
 <option value="1LYZ">Lysozyme</option>
-<option value="6VSB">Spike Protein</option>
+<option value="4HHB">Hemoglobin</option>
+<option value="1MBN">Myoglobin</option>
+<option value="3NIR">Cytochrome C</option>
+<option value="1BNA">DNA Duplex</option>
+<option value="1AKE">Adenylate Kinase</option>
+<option value="1GFL">GFP</option>
+<option value="6VSB">COVID Spike</option>
+<option value="5XNL">CRISPR-Cas9</option>
+<option value="3J3Q">Ribosome</option>
 </select>
-
-<input id="pdbInput" placeholder="Custom PDB ID">
 
 <select id="rep">
 <option value="cartoon">Cartoon</option>
@@ -49,24 +61,15 @@
 <option value="spacefill">Spacefill</option>
 </select>
 
-<select id="color">
-<option value="chainname">Chain</option>
-<option value="element">Element</option>
-<option value="residueindex">Rainbow</option>
-</select>
-
 <button onclick="loadProtein()">Load Protein</button>
 <button onclick="toggleSpin()">Rotate</button>
 <button onclick="resetView()">Reset</button>
-
-<!-- NEW FEATURES -->
 <button onclick="showLigand()">Ligands</button>
 <button onclick="showActiveSite()">Active Site</button>
-<button onclick="analyzeStructure()">Analyze</button>
 
 <div id="viewer"></div>
 <div id="proteinInfo"></div>
-<div id="analysis"></div>
+
 </div>
 
 </div>
