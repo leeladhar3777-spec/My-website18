@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Bio Lab Ultimate Pro 💀🧬</title>
+<title>God Mode Bio Lab 💀🧬</title>
 
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/ngl@latest/dist/ngl.js"></script>
@@ -10,13 +10,13 @@
 
 <body>
 
-<header>🧬 SRM Bio Lab</header>
+<header>🧬 GOD MODE BIO LAB</header>
 
 <div class="container">
 
 <!-- ================= BMI ================= -->
 <div class="card">
-<h3>📊 BMI + Health Analyzer</h3>
+<h3>📊 Health Engine (BMI + BMR)</h3>
 
 <input id="height" placeholder="Height (cm)">
 <input id="weight" placeholder="Weight (kg)">
@@ -27,7 +27,7 @@
 <option value="female">Female</option>
 </select>
 
-<button onclick="calcBMI()">Analyze</button>
+<button onclick="calcBMI()">Analyze Health</button>
 
 <div id="bmiOut"></div>
 <div id="dietOut"></div>
@@ -35,22 +35,18 @@
 
 <!-- ================= PROTEIN ================= -->
 <div class="card">
-<h3>🧬 Protein Explorer (ALL PDB)</h3>
+<h3>🧬 Protein God Viewer</h3>
 
-<input id="pdbInput" placeholder="Enter PDB ID (e.g. 1CRN)">
+<input id="pdbInput" placeholder="Enter PDB ID (e.g. 6LU7)">
 
 <select id="proteinList">
 <option value="1CRN">Crambin</option>
 <option value="1INS">Insulin</option>
 <option value="1LYZ">Lysozyme</option>
 <option value="4HHB">Hemoglobin</option>
-<option value="1MBN">Myoglobin</option>
-<option value="3NIR">Cytochrome C</option>
-<option value="1BNA">DNA Duplex</option>
-<option value="1AKE">Adenylate Kinase</option>
-<option value="1GFL">GFP</option>
-<option value="6VSB">COVID Spike</option>
-<option value="5XNL">CRISPR-Cas9</option>
+<option value="6VSB">Spike Protein</option>
+<option value="6LU7">COVID Protease</option>
+<option value="5XNL">CRISPR Cas9</option>
 <option value="3J3Q">Ribosome</option>
 </select>
 
@@ -64,8 +60,9 @@
 <button onclick="loadProtein()">Load Protein</button>
 <button onclick="toggleSpin()">Rotate</button>
 <button onclick="resetView()">Reset</button>
-<button onclick="showLigand()">Ligands</button>
-<button onclick="showActiveSite()">Active Site</button>
+
+<button onclick="toggleLigand()">Ligands</button>
+<button onclick="toggleActiveSite()">Active Site</button>
 
 <div id="viewer"></div>
 <div id="proteinInfo"></div>
