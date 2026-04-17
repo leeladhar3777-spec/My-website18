@@ -1,45 +1,5 @@
 // ================= BMI =================
-function calcBMI(){
 
-let h = parseFloat(height.value);
-let w = parseFloat(weight.value);
-let ageVal = parseInt(age.value);
-let genderVal = gender.value;
-
-if(!h || !w){
-alert("Enter values");
-return;
-}
-
-h = h/100;
-
-// BMI
-let bmi = w/(h*h);
-
-let category="";
-if(bmi<18.5) category="Underweight";
-else if(bmi<25) category="Normal";
-else if(bmi<30) category="Overweight";
-else category="Obese";
-
-// BMR
-let bmr = (genderVal==="male")
-? 10*w + 6.25*(h*100) - 5*ageVal + 5
-: 10*w + 6.25*(h*100) - 5*ageVal - 161;
-
-bmiOut.innerHTML=`
-<b>BMI:</b> ${bmi.toFixed(2)}<br>
-<b>Category:</b> ${category}<br>
-<b>BMR:</b> ${Math.round(bmr)} kcal/day
-`;
-
-dietOut.innerText =
-category==="Normal"
-? "Balanced diet recommended"
-: category==="Underweight"
-? "High calorie diet needed"
-: "Low calorie + exercise required";
-}
 
 // ================= PROTEIN ENGINE =================
 let stage, component;
