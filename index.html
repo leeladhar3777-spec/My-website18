@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>God Mode Bio Lab 💀🧬</title>
+<title>GOD MODE BIO LAB 💀🧬</title>
 
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/ngl@latest/dist/ngl.js"></script>
@@ -10,13 +10,13 @@
 
 <body>
 
-<header>🧬 GOD MODE BIO LAB</header>
+<header>🧬 SRM BIOINFORMATICS LAB</header>
 
 <div class="container">
 
 <!-- ================= BMI ================= -->
 <div class="card">
-<h3>📊 Health Engine (BMI + BMR)</h3>
+<h3>📊 Health Engine</h3>
 
 <input id="height" placeholder="Height (cm)">
 <input id="weight" placeholder="Weight (kg)">
@@ -27,7 +27,7 @@
 <option value="female">Female</option>
 </select>
 
-<button onclick="calcBMI()">Analyze Health</button>
+<button onclick="calcBMI()">Run Analysis</button>
 
 <div id="bmiOut"></div>
 <div id="dietOut"></div>
@@ -44,7 +44,9 @@
 <option value="1INS">Insulin</option>
 <option value="1LYZ">Lysozyme</option>
 <option value="4HHB">Hemoglobin</option>
-<option value="6VSB">Spike Protein</option>
+<option value="1MBN">Myoglobin</option>
+<option value="1BNA">DNA</option>
+<option value="6VSB">Spike</option>
 <option value="6LU7">COVID Protease</option>
 <option value="5XNL">CRISPR Cas9</option>
 <option value="3J3Q">Ribosome</option>
@@ -63,9 +65,12 @@
 
 <button onclick="toggleLigand()">Ligands</button>
 <button onclick="toggleActiveSite()">Active Site</button>
+<button onclick="analyzeProtein()">Analyze</button>
 
 <div id="viewer"></div>
+
 <div id="proteinInfo"></div>
+<div id="analysisPanel"></div>
 
 </div>
 
@@ -73,4 +78,4 @@
 
 <script src="script.js"></script>
 </body>
-</html>
+  </html>
