@@ -147,46 +147,91 @@ component.autoView();
 function analyzeProtein(){
 
 if(!component){
-alert("Load protein first");
+alert("Load a protein first");
 return;
 }
 
-let residues=0, atoms=0, ligands=0;
-let chains={};
-let amino={};
+let helix = 0;
+let sheet = 0;
+let coil = 0;
+let total = 0;
 
-component.structure.eachResidue(r=>{
+let residues = 0;
+let atoms = 0;
+let ligands = 0;
+
+let chains = {};
+let amino = {};
+
+// ================= SECONDARY STRUCTURE =================
+component.structure.eachResidue(r => {
+
+total++;
 residues++;
 
-chains[r.chainname]=(chains[r.chainname]||0)+1;
-amino[r.resname]=(amino[r.resname]||0)+1;
+// chain stats
+let c = r.chainname || "Unknown";
+chains[c] = (chains[c] || 0) + 1;
 
+// amino acid stats
+let name = r.resname;
+amino[name] = (amino[name] || 0) + 1;
+
+// ligand detection
 if(r.isHet) ligands++;
+
+// REAL secondary structure from PDB
+// NGL uses: helix = "h", sheet = "e"
+if(r.sstruc === "h") helix++;
+else if(r.sstruc === "e") sheet++;
+else coil++;
+
 });
 
-component.structure.eachAtom(a=>{
+// ================= ATOM COUNT =================
+component.structure.eachAtom(a => {
 atoms++;
 });
 
+// ================= PERCENTAGE CALC =================
+let hPercent = ((helix / total) * 100).toFixed(1);
+let sPercent = ((sheet / total) * 100).toFixed(1);
+let cPercent = ((coil / total) * 100).toFixed(1);
+
+// ================= TOP AMINO ACIDS =================
 let topAA = Object.entries(amino)
 .sort((a,b)=>b[1]-a[1])
 .slice(0,5)
-.map(x=>`${x[0]} (${x[1]})`)
+.map(x=>`${x[0]}: ${x[1]}`)
 .join("<br>");
 
+// ================= CHAINS =================
 let chainInfo = Object.entries(chains)
-.map(x=>`Chain ${x[0]}: ${x[1]}`)
+.map(x=>`Chain ${x[0]} → ${x[1]} residues`)
 .join("<br>");
 
-analysisPanel.innerHTML=`
-<h3>🔬 Protein Analysis Report</h3>
-<b>Residues:</b> ${residues}<br>
-<b>Atoms:</b> ${atoms}<br>
-<b>Ligands:</b> ${ligands}<br>
-<br><b>Chains:</b><br>${chainInfo}
-<br><br><b>Top Amino Acids:</b><br>${topAA}
+// ================= OUTPUT =================
+analysisPanel.innerHTML = `
+<h3>🧬 Protein Structural Analysis</h3>
+
+<b>📌 Secondary Structure:</b><br>
+🧪 Helix (α-helix): ${hPercent}%<br>
+📄 Sheet (β-sheet): ${sPercent}%<br>
+🌀 Coil / Loop: ${cPercent}%<br>
+
+<br><b>📊 Basic Stats:</b><br>
+Residues: ${residues}<br>
+Atoms: ${atoms}<br>
+Ligands: ${ligands}<br>
+
+<br><b>🔗 Chains:</b><br>
+${chainInfo}
+
+<br><b>🧬 Top Amino Acids:</b><br>
+${topAA}
 `;
 }
+
 
 // ================= INFO =================
 async function fetchInfo(pdb){
